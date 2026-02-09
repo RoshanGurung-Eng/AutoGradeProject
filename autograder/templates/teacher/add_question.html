@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Question{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    {% if request.GET.edit %}✏️ Edit Question{% else %}➕ Add New Question{% endif %}
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if success_message %}
+                <div class="alert alert-success">{{ success_message }}</div>
+                {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Question ID:</strong></label>
+                        <input type="text" class="form-control" name="question_id" 
+                               value="{{ request.GET.edit }}" 
+                               {% if request.GET.edit %}readonly{% endif %}
+                               placeholder="e.g., Q1, OOAD_Q1" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Question Text:</strong></label>
+                        <textarea class="form-control" name="question_text" rows="3" required>{% for q in questions %}
+                            {% if q.question_id == request.GET.edit %}{{ q.question_text }}{% endif %}
+                        {% endfor %}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Expected Keywords (comma-separated):</strong></label>
+                        <textarea class="form-control" name="expected_keywords" rows="4" required>{% for q in questions %}
+                            {% if q.question_id == request.GET.edit %}{{ q.expected_keywords }}{% endif %}
+                        {% endfor %}</textarea>
+                        <small class="text-muted">Example: uml, unified, modeling, language, communication</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Model Answer:</strong></label>
+                        <textarea class="form-control" name="model_answer" rows="6" required>{% for q in questions %}
+                            {% if q.question_id == request.GET.edit %}{{ q.model_answer }}{% endif %}
+                        {% endfor %}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">
+                            {% if request.GET.edit %}Update Question{% else %}Add Question{% endif %}
+                        </button>
+                        <a href="{% url 'teacher_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
